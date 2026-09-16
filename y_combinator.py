@@ -255,12 +255,13 @@ but we would have to return a nullary that can call Y(F) rather than Y(F) to pre
 DUPER = lambda me: lambda essence: essence(lambda: me(me)(essence))
 # Y_COMBINATOR = DUPER(DUPER)
 Y_COMBINATOR = (lambda x: x(x))(lambda me: lambda essence: essence(lambda: me(me)(essence)))
-assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(ZERO)(lambda x: x+1)(0) == 1
-assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ONE)(ZERO)(lambda x: x+1)(0) == 0
-assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(TEN)(ZERO)(lambda x: x+1)(0) == 0
-assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(ONE)(lambda x: x+1)(0) == 1
-assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(TEN)(lambda x: x+1)(0) == 1
-assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(SIX)(FOUR)(lambda x: x+1)(0) == 9
+PARTITION_DP = Y_COMBINATOR(PARTITION_DP_ESSENCE)
+assert PARTITION_DP(ZERO)(ZERO)(lambda x: x+1)(0) == 1
+assert PARTITION_DP(ONE)(ZERO)(lambda x: x+1)(0) == 0
+assert PARTITION_DP(TEN)(ZERO)(lambda x: x+1)(0) == 0
+assert PARTITION_DP(ZERO)(ONE)(lambda x: x+1)(0) == 1
+assert PARTITION_DP(ZERO)(TEN)(lambda x: x+1)(0) == 1
+assert PARTITION_DP(SIX)(FOUR)(lambda x: x+1)(0) == 9
 
 """
 yoooo it passed!!!!!
@@ -272,10 +273,3 @@ Y_COMBINATOR = (lambda x: x(x))(lambda me: lambda essence: essence(me(me)(essenc
 and in real lambda calculus you would use a lazy reduction order
 that doesn't do me(me)(essence) first (infinite loop)
 """
-
-"""
-OK ACTUALLY what i made was a z combinator, not a y combinator HAHA
-a z combinator is just a y combinator that you're suppose to evaluate eagerly
-but this is as close as you can get to a y combinator in python (eager)!!!!
-"""
-
