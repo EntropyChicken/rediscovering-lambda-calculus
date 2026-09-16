@@ -98,6 +98,8 @@ else incremenet it
 """
 
 IDENTITY = lambda x: x
+
+ # kind of a pseudo-numeral thing. it's of the "numeral" type but is distinct from all numeras
 FORCE_TRUE = lambda f: lambda x: TRUE
 IS_FORCE_TRUE = lambda numlike: numlike(IDENTITY)(FALSE)
 assert not IS_FORCE_TRUE(ONE)(True)(False)
