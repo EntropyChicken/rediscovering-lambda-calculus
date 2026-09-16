@@ -181,10 +181,101 @@ it's certainly not y combinator. i think.
 well, i have achieved recursion without y combinator. idk what y combinator is, then
 """
 
+# to make a quick halver, i'd like to store a number and pair together
+# (so i can inc only half the time by toggling the bool part)
+# a num bool pair is a thing where if you pass in zero as the argument, you get the number
+# and if you pass in one as the argument, you get the bool
+MAKE_NUM_BOOL_PAIR = lambda num: lambda bool: lambda extraction_index: IS_ZERO(extraction_index)(num)(bool)
+
+HALF = lambda num: num(lambda num_bool_pair: num_bool_pair(ONE)(MAKE_NUM_BOOL_PAIR(INC(num_bool_pair(ZERO)))(FALSE))(MAKE_NUM_BOOL_PAIR(num_bool_pair(ZERO))(TRUE)))(MAKE_NUM_BOOL_PAIR(ZERO)(FALSE))(ZERO)
+assert HALF(TWO)(lambda x: x+1)(0) == 1
+assert HALF(THREE)(lambda x: x+1)(0) == 1
+assert HALF(FOUR)(lambda x: x+1)(0) == 2
+assert HALF(FIVE)(lambda x: x+1)(0) == 2
+assert HALF(SIX)(lambda x: x+1)(0) == 3
+assert HALF(SEVEN)(lambda x: x+1)(0) == 3
+
 """
 ok an outside source said having a y combinator lets us make functions that
 simply call an argument that represents themselves, like me() instead of me(me)()
 
 well, then "me" somehow has to know about itself...?
-maybe "me" is always made out of the y combinator and essesnce
+maybe "me" is always made out of the y combinator and essence put together somehow
+and the y combinator is some sort of super special function that can "recreate itself"
+(or, the combination of the y combinator and some essence can recreate itself)
+
+okay apparently the y combinator is such that Y(F) = F(Y(F))
+but doesn't that imply that you call Y(F)(arg1)(arg2)...etc. to actually get functionality?
+and so that becomes F(Y(F))(arg1)(arg2)...
+okay the general idea is that Y(F)->F(Y(F))->F(F(Y(F)))->F(F(F(Y(F)))) so like,
+if we imagine a theoretical unrolled U = F(F(F(F(F(F(F(F(F(...Y(F)...))))))))) with infinitely many Fs,
+then U(arg1)(arg2)... is F(U)(arg1)(arg2)... which should do the "essence function" F
+and recreate itself
+but the reduction order of this recreation must not unroll too early (that'd be infinite recursion)
 """
+
+PARTITION_DP_ESSENCE = lambda me: lambda whole: lambda partition_max: IS_ZERO(whole)(lambda: ONE)(IS_ZERO(partition_max)(lambda: ZERO)(lambda: ADD(LESS_THAN_OR_EQUALS(partition_max)(whole)(lambda: me()(SUBTRACT(whole)(partition_max))(partition_max))(lambda: ZERO)())(me()(whole)(DEC(partition_max)))))()
+
+"""
+Y_COMBINATOR = lambda essence: essence(lambda: Y_COMBINATOR(essence))
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(ZERO)(lambda x: x+1)(0) == 1
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ONE)(ZERO)(lambda x: x+1)(0) == 0
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(TEN)(ZERO)(lambda x: x+1)(0) == 0
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(ONE)(lambda x: x+1)(0) == 1
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(TEN)(lambda x: x+1)(0) == 1
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(SIX)(FOUR)(lambda x: x+1)(0) == 9
+1 1 1 1 1 1
+1 1 1 1 2
+1 1 2 2
+2 2 2
+1 1 1 3
+1 2 3
+3 3
+1 1 4
+2 4
+that's 9 ways
+so this works. we basically want to do this:
+Y_COMBINATOR = lambda essence: essence(lambda: Y_COMBINATOR(essence))
+except we must not use Y_COMBINATOR's name in its definition
+it probably has to pass itself into itself as well
+Y_COMBINATOR = lambda me: lambda essence: essence(lambda: me(essence))
+Y_COMBINATOR(Y_COMBINATOR)(ESSENCE)
+
+i'm trying to remember the old simple thing that recurs forever
+THING = lambda x: x(x)
+THING(THING)
+
+THING = lambda me: lambda essence: essence(me(me)(essence))
+THING(THING)(ESSENCE) becomes ESSENCE(THING(THING)(ESSENCE))
+this looks pretty close
+Y_COMBINATOR = THING(THING)
+but we would have to return a nullary that can call Y(F) rather than Y(F) to prevent python eagerness
+"""
+
+DUPER = lambda me: lambda essence: essence(lambda: me(me)(essence))
+# Y_COMBINATOR = DUPER(DUPER)
+Y_COMBINATOR = (lambda x: x(x))(lambda me: lambda essence: essence(lambda: me(me)(essence)))
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(ZERO)(lambda x: x+1)(0) == 1
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ONE)(ZERO)(lambda x: x+1)(0) == 0
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(TEN)(ZERO)(lambda x: x+1)(0) == 0
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(ONE)(lambda x: x+1)(0) == 1
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(ZERO)(TEN)(lambda x: x+1)(0) == 1
+assert Y_COMBINATOR(PARTITION_DP_ESSENCE)(SIX)(FOUR)(lambda x: x+1)(0) == 9
+
+"""
+yoooo it passed!!!!!
+is this really it?
+i think i actually made Y_COMBINATOR!
+(except it has to return a nullary function in order to prevent python's eagerness)
+otherwise it would be cool like this:
+Y_COMBINATOR = (lambda x: x(x))(lambda me: lambda essence: essence(me(me)(essence)))
+and in real lambda calculus you would use a lazy reduction order
+that doesn't do me(me)(essence) first (infinite loop)
+"""
+
+"""
+OK ACTUALLY what i made was a z combinator, not a y combinator HAHA
+a z combinator is just a y combinator that you're suppose to evaluate eagerly
+but this is as close as you can get to a y combinator in python (eager)!!!!
+"""
+
