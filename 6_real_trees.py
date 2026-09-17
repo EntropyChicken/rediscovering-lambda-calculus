@@ -258,31 +258,27 @@ assert GET_ITEM(epic_linked_list)(ZERO)(lambda x: x+1)(0) == 1
 assert GET_ITEM(epic_linked_list)(ONE)(lambda x: x+1)(0) == 2
 assert GET_ITEM(epic_linked_list)(DEC(LEN(epic_linked_list)))(lambda x: x+1)(0) == 10
 
-TERM_SUM = Z_COMBINATOR(lambda me:
-    lambda linked_list: lambda unary_term_function:
-        ADD
-        (unary_term_function(linked_list(ZERO)))
+# generalization of SUM to any kind of term (node)->(value) and any kind of combinator (value,value)->(value)
+# combine_values should be commutative and associative
+TERM_COMBINE = Z_COMBINATOR(lambda me:
+    lambda linked_list: lambda term: lambda combine_values: lambda start_value:
+        combine_values
+        (term(linked_list(ZERO)))
         (
             linked_list(ONE)
-            (lambda _: me(linked_list(TWO))(unary_term_function))
-            (lambda _: ZERO)
+            (lambda _: me(linked_list(TWO))(term)(combine_values)(start_value))
+            (lambda _: start_value)
             (NONE)
         )
 )
-TERM_MAX = Z_COMBINATOR(lambda me:
-    lambda linked_list: lambda unary_term_function:
-        MAX
-        (unary_term_function(linked_list(ZERO)))
-        (
-            linked_list(ONE)
-            (lambda _: me(linked_list(TWO))(unary_term_function))
-            (lambda _: ZERO)
-            (NONE)
-        )
-)
+TERM_SUM = lambda linked_list: lambda term: TERM_COMBINE(linked_list)(term)(ADD)(ZERO)
 assert TERM_SUM(epic_linked_list)(lambda x: INC(x))(lambda x: x+1)(0) == 65
 assert TERM_SUM(epic_linked_list)(lambda x: NINE)(lambda x: x+1)(0) == 90
 assert TERM_SUM(epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(0) == 145
+TERM_MAX = lambda linked_list: lambda term: TERM_COMBINE(linked_list)(term)(MAX)(ZERO) # assuming the smallest number in this universe is ZERO
+assert TERM_MAX(epic_linked_list)(lambda x: INC(x))(lambda x: x+1)(0) == 11
+assert TERM_MAX(epic_linked_list)(lambda x: NINE)(lambda x: x+1)(0) == 9
+assert TERM_MAX(epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(0) == 19
 
 # a tree is represented by a tree node that is a triple
 # element zero is anything
@@ -387,5 +383,18 @@ TREE_HEIGHT = Z_COMBINATOR(lambda me:
 )
 assert TREE_HEIGHT(my_little_tree)(lambda x: x+1)(0) == 2
 assert TREE_HEIGHT(my_big_tree)(lambda x: x+1)(0) == 9
+
+# generalized tree DFS. combine_values should be commutative and associative
+DFS = Z_COMBINATOR(lambda me:
+    lambda tree: lambda get_value: lambda combine_values: lambda start_value:
+        combine_values
+        (get_value(tree))
+        (
+            tree(ONE)
+            (lambda _: TERM_COMBINE(tree(TWO))(lambda subtree: me(subtree)(term)))
+            (lambda _: start_value)
+            (NONE)
+        )
+)
 
 # trees :D
