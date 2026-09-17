@@ -277,4 +277,4 @@ okay apparently this is an atypical variant of y combinator or of z combinator..
 but it works in python :D
 """
 
-# note: nullary functions probably shouldn't be allowed...!
+# note: nullary functions probably shouldn't be allowed, since this is supposed to be like untyped lambda calculus
