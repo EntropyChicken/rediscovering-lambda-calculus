@@ -225,7 +225,7 @@ SET_ITEM = Z_COMBINATOR(lambda me:
     lambda linked_list: lambda index: lambda element:
         IS_ZERO(index)
         (lambda _: PUSH_FRONT(element)(linked_list(TWO)))
-        (lambda _: PUSH_FRONT(linked_list(ZERO))(SET_ITEM(linked_list(TWO))(DEC(index))(element)))
+        (lambda _: PUSH_FRONT(linked_list(ZERO))(me(linked_list(TWO))(DEC(index))(element)))
         (NONE)
 )
 assert GET_ITEM(SET_ITEM(my_linked_list)(THREE)(TEN))(TWO)(lambda x: x+1)(0) == 2
