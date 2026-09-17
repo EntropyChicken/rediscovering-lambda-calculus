@@ -42,6 +42,8 @@ GREATER_THAN_OR_EQUALS = lambda num_1: lambda num_2: IS_ZERO(SUBTRACT(num_2)(num
 EQUALS = lambda num_1: lambda num_2: AND(LESS_THAN_OR_EQUALS(num_1)(num_2))(GREATER_THAN_OR_EQUALS(num_1)(num_2))
 LESS_THAN = lambda num_1: lambda num_2: NOT(GREATER_THAN_OR_EQUALS(num_1)(num_2))
 GREATER_THAN = lambda num_1: lambda num_2: NOT(LESS_THAN_OR_EQUALS(num_1)(num_2))
+MIN = lambda num_1: lambda num_2: LESS_THAN_OR_EQUALS(num_1)(num_2)(num_1)(num_2)
+MAX = lambda num_1: lambda num_2: LESS_THAN_OR_EQUALS(num_1)(num_2)(num_2)(num_1)
 
 Z_COMBINATOR = (lambda x: x(x))(lambda me: lambda essence: essence(lambda arg_1: me(me)(essence)(arg_1)))
 
@@ -160,8 +162,6 @@ assert MAKE_QUADRUPLET(TEN)(NINE)(EIGHT)(SEVEN)(ZERO)(lambda x: x+1)(0) == 10
 assert MAKE_QUADRUPLET(TEN)(NINE)(EIGHT)(SEVEN)(ONE)(lambda x: x+1)(0) == 9
 assert MAKE_QUADRUPLET(TEN)(NINE)(EIGHT)(SEVEN)(THREE)(lambda x: x+1)(0) == 7
 
-MAKE_SINGLE = lambda a: lambda extraction_num: a
-
 # a linked list is an implicit data structure made by nesting many triplets
 # element zero of the triplet can be anyhting
 # element one should be a boolean indicating whether there is another node
@@ -269,6 +269,17 @@ TERM_SUM = Z_COMBINATOR(lambda me:
             (NONE)
         )
 )
+TERM_MAX = Z_COMBINATOR(lambda me:
+    lambda linked_list: lambda unary_term_function:
+        MAX
+        (unary_term_function(linked_list(ZERO)))
+        (
+            linked_list(ONE)
+            (lambda _: me(linked_list(TWO))(unary_term_function))
+            (lambda _: ZERO)
+            (NONE)
+        )
+)
 assert TERM_SUM(epic_linked_list)(lambda x: INC(x))(lambda x: x+1)(0) == 65
 assert TERM_SUM(epic_linked_list)(lambda x: NINE)(lambda x: x+1)(0) == 90
 assert TERM_SUM(epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(0) == 145
@@ -280,7 +291,7 @@ assert TERM_SUM(epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(
 my_little_tree = MAKE_TRIPLET(TWENTY)(TRUE)(MAKE_LINKED_LIST_STUB(
     MAKE_TRIPLET(FIVE)(FALSE)(NONE)
 ))
-my_tree = MAKE_TRIPLET(NINE)(TRUE)(MAKE_LINKED_LIST(
+my_big_tree = MAKE_TRIPLET(NINE)(TRUE)(MAKE_LINKED_LIST(
     MAKE_TRIPLET(FOUR)(TRUE)(MAKE_LINKED_LIST(
         MAKE_TRIPLET(ELEVEN)(FALSE)(NONE)
     )(TRUE)(
@@ -346,17 +357,35 @@ my_tree = MAKE_TRIPLET(NINE)(TRUE)(MAKE_LINKED_LIST(
     )(FALSE))
 )(FALSE))
 
-DFS_SUM = Z_COMBINATOR(lambda me:
-    lambda tree:
+TREE_TERM_SUM = Z_COMBINATOR(lambda me:
+    lambda tree: lambda term:
         ADD
-        (tree(ZERO))
+        (term(tree(ZERO)))
         (
             tree(ONE)
-            (lambda _: TERM_SUM(tree(TWO))(lambda subtree: me(subtree)))
+            (lambda _: TERM_SUM(tree(TWO))(lambda subtree: me(subtree)(term)))
             (lambda _: ZERO)
             (NONE)
         )
 )
-assert DFS_SUM(my_little_tree)(lambda x: x+1)(0) == 25
-assert DFS_SUM(my_tree)(lambda x: x+1)(0) == 300
+TREE_SUM = lambda tree: TREE_TERM_SUM(tree)(IDENTITY)
+TREE_SIZE = lambda tree: TREE_TERM_SUM(tree)(lambda element: ONE)
+assert TREE_SUM(my_little_tree)(lambda x: x+1)(0) == 25
+assert TREE_SUM(my_big_tree)(lambda x: x+1)(0) == 300
+assert TREE_SIZE(my_little_tree)(lambda x: x+1)(0) == 2
+assert TREE_SIZE(my_big_tree)(lambda x: x+1)(0) == 33
+
+TREE_HEIGHT = Z_COMBINATOR(lambda me:
+    lambda tree:
+        INC
+        (
+            tree(ONE)
+            (lambda _: TERM_MAX(tree(TWO))(lambda subtree: me(subtree)))
+            (lambda _: ZERO)
+            (NONE)
+        )
+)
+assert TREE_HEIGHT(my_little_tree)(lambda x: x+1)(0) == 2
+assert TREE_HEIGHT(my_big_tree)(lambda x: x+1)(0) == 9
+
 # trees :D
