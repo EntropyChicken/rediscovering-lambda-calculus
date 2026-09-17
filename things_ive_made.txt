@@ -1,0 +1,8 @@
+Boolean algebra
+Numerals (natural numbers)
+Arithmetic
+Generalized recursion
+Tuples
+Linked lists
+Trees
+DFS
