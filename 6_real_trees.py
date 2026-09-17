@@ -284,9 +284,25 @@ my_tree = MAKE_TRIPLET(NINE)(TRUE)(MAKE_LINKED_LIST(
     MAKE_TRIPLET(FOUR)(TRUE)(MAKE_LINKED_LIST(
         MAKE_TRIPLET(ELEVEN)(FALSE)(NONE)
     )(TRUE)(
-        MAKE_TRIPLET(NINETEEN)(TRUE)(MAKE_LINKED_LIST(
-            MAKE_TRIPLET(TWENTY)(TRUE)(MAKE_LINKED_LIST(
-                MAKE_TRIPLET(TWENTY)(FALSE)(NONE)
+        MAKE_TRIPLET(EIGHTEEN)(TRUE)(MAKE_LINKED_LIST(
+            MAKE_TRIPLET(NINETEEN)(TRUE)(MAKE_LINKED_LIST(
+                MAKE_TRIPLET(ONE)(TRUE)(MAKE_LINKED_LIST(
+                    MAKE_TRIPLET(TWO)(FALSE)(NONE)
+                )(TRUE)(
+                    MAKE_TRIPLET(TWENTY)(FALSE)(NONE)
+                )(TRUE)(
+                    MAKE_TRIPLET(TWENTY)(FALSE)(NONE)
+                )(TRUE)(
+                    MAKE_TRIPLET(TWENTY)(FALSE)(NONE)
+                )(TRUE)(
+                    MAKE_TRIPLET(FOUR)(TRUE)(MAKE_LINKED_LIST(
+                        MAKE_TRIPLET(SIX)(FALSE)(NONE)
+                    )(FALSE))
+                )(TRUE)(
+                    MAKE_TRIPLET(ONE)(TRUE)(MAKE_LINKED_LIST(
+                        MAKE_TRIPLET(SEVEN)(FALSE)(NONE)
+                    )(FALSE))
+                )(FALSE))
             )(FALSE))
         )(FALSE))
     )(FALSE))
@@ -294,11 +310,39 @@ my_tree = MAKE_TRIPLET(NINE)(TRUE)(MAKE_LINKED_LIST(
     MAKE_TRIPLET(THREE)(TRUE)(MAKE_LINKED_LIST(
         MAKE_TRIPLET(FOURTEEN)(TRUE)(MAKE_LINKED_LIST(
             MAKE_TRIPLET(EIGHTEEN)(TRUE)(MAKE_LINKED_LIST(
-                MAKE_TRIPLET(TWELVE)(FALSE)(NONE)
+                MAKE_TRIPLET(TWENTY)(TRUE)(MAKE_LINKED_LIST(
+                    MAKE_TRIPLET(ZERO)(TRUE)(MAKE_LINKED_LIST(
+                        MAKE_TRIPLET(TWELVE)(TRUE)(MAKE_LINKED_LIST(
+                            MAKE_TRIPLET(ONE)(TRUE)(MAKE_LINKED_LIST(
+                                MAKE_TRIPLET(TEN)(FALSE)(NONE)
+                            )(FALSE))
+                        )(FALSE))
+                    )(FALSE))
+                )(TRUE)(
+                    MAKE_TRIPLET(ONE)(TRUE)(MAKE_LINKED_LIST(
+                        MAKE_TRIPLET(ELEVEN)(TRUE)(MAKE_LINKED_LIST(
+                            MAKE_TRIPLET(TWELVE)(FALSE)(NONE)
+                        )(FALSE))
+                    )(FALSE))
+                )(FALSE))
+            )(TRUE)(
+                MAKE_TRIPLET(TEN)(FALSE)(NONE)
             )(FALSE))
         )(FALSE))
     )(TRUE)(
         MAKE_TRIPLET(SIXTEEN)(FALSE)(NONE)
+    )(FALSE))
+)(TRUE)(
+    MAKE_TRIPLET(SEVEN)(TRUE)(MAKE_LINKED_LIST(
+        MAKE_TRIPLET(ZERO)(TRUE)(MAKE_LINKED_LIST(
+            MAKE_TRIPLET(TWO)(FALSE)(NONE)
+        )(FALSE))
+    )(TRUE)(
+        MAKE_TRIPLET(FIVE)(TRUE)(MAKE_LINKED_LIST(
+            MAKE_TRIPLET(THREE)(TRUE)(MAKE_LINKED_LIST(
+                MAKE_TRIPLET(THIRTEEN)(FALSE)(NONE)
+            )(FALSE))
+        )(FALSE))
     )(FALSE))
 )(FALSE))
 
@@ -314,5 +358,5 @@ DFS_SUM = Z_COMBINATOR(lambda me:
         )
 )
 assert DFS_SUM(my_little_tree)(lambda x: x+1)(0) == 25
-assert DFS_SUM(my_tree)(lambda x: x+1)(0) == 146
+assert DFS_SUM(my_tree)(lambda x: x+1)(0) == 300
 # trees :D
