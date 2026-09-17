@@ -272,4 +272,9 @@ otherwise it would be cool like this:
 Y_COMBINATOR = (lambda x: x(x))(lambda me: lambda essence: essence(me(me)(essence)))
 and in real lambda calculus you would use a lazy reduction order
 that doesn't do me(me)(essence) first (infinite loop)
+
+okay apparently this is an atypical variant of y combinator or of z combinator...?
+but it works in python :D
 """
+
+# note: nullary functions probably shouldn't be allowed...!
