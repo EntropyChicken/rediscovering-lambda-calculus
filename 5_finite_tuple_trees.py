@@ -178,5 +178,3 @@ assert SUBTREE_SIZE(my_tree(ONE))(lambda x: x+1)(0) == 4
 my_super_tree = MAKE_QUADRUPLET(THREE)(my_tree)(my_tree)(my_tree)
 assert SUBTREE_SIZE(my_super_tree)(lambda x: x+1)(0) == 25
 assert SUBTREE_SIZE(MAKE_QUADRUPLET(THREE)(my_tree)(my_super_tree)(my_super_tree))(lambda x: x+1)(0) == 59
-
-MAKE_LINKED_LIST
