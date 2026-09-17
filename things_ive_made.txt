@@ -1,8 +1,12 @@
-Boolean algebra
-Numerals (natural numbers)
-Arithmetic
-Generalized recursion
-Tuples
-Linked lists
-Trees
-DFS
+With only prior knowledge, no help or hints:
+    Boolean algebra
+    Numerals (natural numbers)
+    Arithmetic
+    Recursion
+
+With asking LLMs "have I made Y Combinator yet?"
+    Generalized recursion
+    Tuples
+    Linked lists
+    Trees
+    DFS
