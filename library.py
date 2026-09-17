@@ -96,8 +96,8 @@ FIBONACCI = Z_COMBINATOR(lambda me:
         (lambda _: num)
         (lambda _:
             ADD
-            (FIBONACCI(DEC(num)))
-            (FIBONACCI(DEC(DEC(num))))
+            (me(DEC(num)))
+            (me(DEC(DEC(num))))
         )
         (NONE)
 )
@@ -120,8 +120,9 @@ PARTITION_DP = Z_COMBINATOR(lambda me:
                 ADD
                 (
                     LESS_THAN_OR_EQUALS(partition_max)(whole)
-                    (lambda: me(SUBTRACT(whole)(partition_max))(partition_max))
-                    (lambda: ZERO)()
+                    (lambda _: me(SUBTRACT(whole)(partition_max))(partition_max))
+                    (lambda _: ZERO)
+                    (NONE)
                 )
                 (me(whole)(DEC(partition_max)))
             )
