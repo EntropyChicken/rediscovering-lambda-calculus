@@ -112,7 +112,7 @@ assert FIBONACCI(FIVE)(lambda x: x+1)(0) == 5
 assert FIBONACCI(ADD(TEN)(SIX))(lambda x: x+1)(0) == 987
 
 # counts number of partitions (order doesn't matter) that sum to whole, using pieces of size at most partition_max
-DP_COUNT_PARTITION = Z_COMBINATOR(lambda me:
+COUNT_PARTITIONS = Z_COMBINATOR(lambda me:
     lambda whole: lambda partition_max:
         IS_ZERO(whole)
         (lambda _: ONE)
@@ -132,15 +132,15 @@ DP_COUNT_PARTITION = Z_COMBINATOR(lambda me:
         )
         (NONE)
 )
-assert DP_COUNT_PARTITION(ZERO)(ZERO)(lambda x: x+1)(0) == 1
-assert DP_COUNT_PARTITION(TWO)(ZERO)(lambda x: x+1)(0) == 0
-assert DP_COUNT_PARTITION(TEN)(ZERO)(lambda x: x+1)(0) == 0
-assert DP_COUNT_PARTITION(ZERO)(ONE)(lambda x: x+1)(0) == 1
-assert DP_COUNT_PARTITION(ZERO)(NINE)(lambda x: x+1)(0) == 1
-assert DP_COUNT_PARTITION(SIX)(FOUR)(lambda x: x+1)(0) == 9
-assert DP_COUNT_PARTITION(TEN)(TEN)(lambda x: x+1)(0) == 42
-assert DP_COUNT_PARTITION(TEN)(NINE)(lambda x: x+1)(0) == 41
-assert DP_COUNT_PARTITION(TEN)(THREE)(lambda x: x+1)(0) == 14
+assert COUNT_PARTITIONS(ZERO)(ZERO)(lambda x: x+1)(0) == 1
+assert COUNT_PARTITIONS(TWO)(ZERO)(lambda x: x+1)(0) == 0
+assert COUNT_PARTITIONS(TEN)(ZERO)(lambda x: x+1)(0) == 0
+assert COUNT_PARTITIONS(ZERO)(ONE)(lambda x: x+1)(0) == 1
+assert COUNT_PARTITIONS(ZERO)(NINE)(lambda x: x+1)(0) == 1
+assert COUNT_PARTITIONS(SIX)(FOUR)(lambda x: x+1)(0) == 9
+assert COUNT_PARTITIONS(TEN)(TEN)(lambda x: x+1)(0) == 42
+assert COUNT_PARTITIONS(TEN)(NINE)(lambda x: x+1)(0) == 41
+assert COUNT_PARTITIONS(TEN)(THREE)(lambda x: x+1)(0) == 14
 
 MAKE_PAIR = lambda a: lambda b: lambda extraction_num: EQUALS(extraction_num)(ZERO)(a)(b)
 HALF = lambda num: num(lambda num_bool_pair: num_bool_pair(ONE)(MAKE_PAIR(INC(num_bool_pair(ZERO)))(FALSE))(MAKE_PAIR(num_bool_pair(ZERO))(TRUE)))(MAKE_PAIR(ZERO)(FALSE))(ZERO)
