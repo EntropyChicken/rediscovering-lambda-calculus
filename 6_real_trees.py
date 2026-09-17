@@ -204,8 +204,8 @@ PUSH_BACK = Z_COMBINATOR(lambda me:
         (NONE)
 )
 
-nice_linked_list = PUSH_FRONT(THREE)(PUSH_FRONT(EIGHT)(PUSH_FRONT(FIVE)(PUSH_FRONT(FOUR)(MAKE_LINKED_LIST_STUB(SEVEN)))))
-assert SUM(nice_linked_list)(lambda x: x+1)(0) == 27
+my_nice_linked_list = PUSH_FRONT(THREE)(PUSH_FRONT(EIGHT)(PUSH_FRONT(FIVE)(PUSH_FRONT(FOUR)(MAKE_LINKED_LIST_STUB(SEVEN)))))
+assert SUM(my_nice_linked_list)(lambda x: x+1)(0) == 27
 
 
 GET_ITEM = Z_COMBINATOR(lambda me:
@@ -216,10 +216,10 @@ GET_ITEM = Z_COMBINATOR(lambda me:
         (NONE)
 )
 assert GET_ITEM(my_linked_list)(ZERO)(lambda x: x+1)(0) == 5
-assert GET_ITEM(nice_linked_list)(ONE)(lambda x: x+1)(0) == 8
+assert GET_ITEM(my_nice_linked_list)(ONE)(lambda x: x+1)(0) == 8
 assert GET_ITEM(my_linked_list)(SIX)(lambda x: x+1)(0) == 9
-assert GET_ITEM(nice_linked_list)(FOUR)(lambda x: x+1)(0) == 7
-assert GET_ITEM(PUSH_BACK(nice_linked_list)(TWO))(FIVE)(lambda x: x+1)(0) == 2
+assert GET_ITEM(my_nice_linked_list)(FOUR)(lambda x: x+1)(0) == 7
+assert GET_ITEM(PUSH_BACK(my_nice_linked_list)(TWO))(FIVE)(lambda x: x+1)(0) == 2
 
 SET_ITEM = Z_COMBINATOR(lambda me:
     lambda linked_list: lambda index: lambda element:
@@ -240,7 +240,7 @@ LEN = Z_COMBINATOR(lambda me:
         (NONE)
 )
 assert LEN(my_linked_list)(lambda x: x+1)(0) == 7
-assert LEN(nice_linked_list)(lambda x: x+1)(0) == 5
+assert LEN(my_nice_linked_list)(lambda x: x+1)(0) == 5
 
 # ends when you pass in FALSE after a new addition (if you want to continue, pass TRUE after an addition)
 MAKE_LINKED_LIST_INTERNAL = Z_COMBINATOR(lambda me:
@@ -251,12 +251,12 @@ MAKE_LINKED_LIST_INTERNAL = Z_COMBINATOR(lambda me:
         (NONE)
 )
 MAKE_LINKED_LIST = lambda element_1: lambda expect_more_arguments_1: expect_more_arguments_1(lambda _: lambda element_2: lambda expect_more_arguments_2: MAKE_LINKED_LIST_INTERNAL(MAKE_LINKED_LIST_STUB(element_1))(element_2)(expect_more_arguments_2))(lambda _: MAKE_LINKED_LIST_STUB(element_1))(NONE)
-epic_linked_list = MAKE_LINKED_LIST(ONE)(TRUE)(TWO)(TRUE)(THREE)(TRUE)(FOUR)(TRUE)(FIVE)(TRUE)(SIX)(TRUE)(SEVEN)(TRUE)(EIGHT)(TRUE)(NINE)(TRUE)(TEN)(FALSE)
-assert LEN(epic_linked_list)(lambda x: x+1)(0) == 10
-assert SUM(epic_linked_list)(lambda x: x+1)(0) == 55
-assert GET_ITEM(epic_linked_list)(ZERO)(lambda x: x+1)(0) == 1
-assert GET_ITEM(epic_linked_list)(ONE)(lambda x: x+1)(0) == 2
-assert GET_ITEM(epic_linked_list)(DEC(LEN(epic_linked_list)))(lambda x: x+1)(0) == 10
+my_epic_linked_list = MAKE_LINKED_LIST(ONE)(TRUE)(TWO)(TRUE)(THREE)(TRUE)(FOUR)(TRUE)(FIVE)(TRUE)(SIX)(TRUE)(SEVEN)(TRUE)(EIGHT)(TRUE)(NINE)(TRUE)(TEN)(FALSE)
+assert LEN(my_epic_linked_list)(lambda x: x+1)(0) == 10
+assert SUM(my_epic_linked_list)(lambda x: x+1)(0) == 55
+assert GET_ITEM(my_epic_linked_list)(ZERO)(lambda x: x+1)(0) == 1
+assert GET_ITEM(my_epic_linked_list)(ONE)(lambda x: x+1)(0) == 2
+assert GET_ITEM(my_epic_linked_list)(DEC(LEN(my_epic_linked_list)))(lambda x: x+1)(0) == 10
 
 # generalization of SUM to any kind of term (node)->(value) and any kind of combinator (value,value)->(value)
 # combine_values should be commutative and associative
@@ -272,13 +272,13 @@ TERM_COMBINE = Z_COMBINATOR(lambda me:
         )
 )
 TERM_SUM = lambda linked_list: lambda term: TERM_COMBINE(linked_list)(term)(ADD)(ZERO)
-assert TERM_SUM(epic_linked_list)(lambda x: INC(x))(lambda x: x+1)(0) == 65
-assert TERM_SUM(epic_linked_list)(lambda x: NINE)(lambda x: x+1)(0) == 90
-assert TERM_SUM(epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(0) == 145
+assert TERM_SUM(my_epic_linked_list)(lambda x: INC(x))(lambda x: x+1)(0) == 65
+assert TERM_SUM(my_epic_linked_list)(lambda x: NINE)(lambda x: x+1)(0) == 90
+assert TERM_SUM(my_epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(0) == 145
 TERM_MAX = lambda linked_list: lambda term: TERM_COMBINE(linked_list)(term)(MAX)(ZERO) # assuming the smallest number in this universe is ZERO
-assert TERM_MAX(epic_linked_list)(lambda x: INC(x))(lambda x: x+1)(0) == 11
-assert TERM_MAX(epic_linked_list)(lambda x: NINE)(lambda x: x+1)(0) == 9
-assert TERM_MAX(epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(0) == 19
+assert TERM_MAX(my_epic_linked_list)(lambda x: INC(x))(lambda x: x+1)(0) == 11
+assert TERM_MAX(my_epic_linked_list)(lambda x: NINE)(lambda x: x+1)(0) == 9
+assert TERM_MAX(my_epic_linked_list)(lambda x: SUBTRACT(TWENTY)(x))(lambda x: x+1)(0) == 19
 
 # a tree is represented by a tree node that is a triple
 # element zero is anything
@@ -374,10 +374,10 @@ assert TREE_SIZE(my_little_tree)(lambda x: x+1)(0) == 2
 assert TREE_SIZE(my_big_tree)(lambda x: x+1)(0) == 33
 assert TREE_HAS_NUMERAL(my_little_tree)(FIVE)(True)(False)
 assert TREE_HAS_NUMERAL(my_little_tree)(TWENTY)(True)(False)
-assert NOT(TREE_HAS_NUMERAL(my_little_tree)(ZERO))(True)(False)
+assert not TREE_HAS_NUMERAL(my_little_tree)(ZERO)(True)(False)
 assert TREE_HAS_NUMERAL(my_big_tree)(ZERO)(True)(False)
 assert TREE_HAS_NUMERAL(my_big_tree)(THIRTEEN)(True)(False)
-assert NOT(TREE_HAS_NUMERAL(my_big_tree)(ADD(TWENTY)(ONE)))(True)(False)
+assert not TREE_HAS_NUMERAL(my_big_tree)(ADD(TWENTY)(ONE))(True)(False)
 
 # generalized tree DFS.
 # combine_child_values should be commutative and associative
