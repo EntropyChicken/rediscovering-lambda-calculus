@@ -32,14 +32,6 @@ GREATER_THAN_OR_EQUALS = lambda num_1: lambda num_2: IS_ZERO(SUBTRACT(num_2)(num
 EQUALS = lambda num_1: lambda num_2: AND(LESS_THAN_OR_EQUALS(num_1)(num_2))(GREATER_THAN_OR_EQUALS(num_1)(num_2))
 LESS_THAN = lambda num_1: lambda num_2: NOT(GREATER_THAN_OR_EQUALS(num_1)(num_2))
 GREATER_THAN = lambda num_1: lambda num_2: NOT(LESS_THAN_OR_EQUALS(num_1)(num_2))
-MAKE_NUM_BOOL_PAIR = lambda num: lambda bool: lambda extraction_index: IS_ZERO(extraction_index)(num)(bool)
-HALF = lambda num: num(lambda num_bool_pair: num_bool_pair(ONE)(MAKE_NUM_BOOL_PAIR(INC(num_bool_pair(ZERO)))(FALSE))(MAKE_NUM_BOOL_PAIR(num_bool_pair(ZERO))(TRUE)))(MAKE_NUM_BOOL_PAIR(ZERO)(FALSE))(ZERO)
-assert HALF(ZERO)(lambda x: x+1)(0) == 0
-assert HALF(ONE)(lambda x: x+1)(0) == 0
-assert HALF(TWO)(lambda x: x+1)(0) == 1
-assert HALF(THREE)(lambda x: x+1)(0) == 1
-assert HALF(FOUR)(lambda x: x+1)(0) == 2
-assert HALF(FIVE)(lambda x: x+1)(0) == 2
 
 Z_COMBINATOR = (lambda x: x(x))(lambda me: lambda essence: essence(lambda arg_1: me(me)(essence)(arg_1)))
 
@@ -109,7 +101,7 @@ assert FIBONACCI(FOUR)(lambda x: x+1)(0) == 3
 assert FIBONACCI(FIVE)(lambda x: x+1)(0) == 5
 assert FIBONACCI(ADD(TEN)(SIX))(lambda x: x+1)(0) == 987
 
-PARTITION_DP = Z_COMBINATOR(lambda me:
+DP_COUNT_PARTITION = Z_COMBINATOR(lambda me:
     lambda whole: lambda partition_max:
         IS_ZERO(whole)
         (lambda _: ONE)
@@ -129,12 +121,59 @@ PARTITION_DP = Z_COMBINATOR(lambda me:
         )
         (NONE)
 )
-assert PARTITION_DP(ZERO)(ZERO)(lambda x: x+1)(0) == 1
-assert PARTITION_DP(TWO)(ZERO)(lambda x: x+1)(0) == 0
-assert PARTITION_DP(TEN)(ZERO)(lambda x: x+1)(0) == 0
-assert PARTITION_DP(ZERO)(ONE)(lambda x: x+1)(0) == 1
-assert PARTITION_DP(ZERO)(NINE)(lambda x: x+1)(0) == 1
-assert PARTITION_DP(SIX)(FOUR)(lambda x: x+1)(0) == 9
-assert PARTITION_DP(TEN)(TEN)(lambda x: x+1)(0) == 42
-assert PARTITION_DP(TEN)(NINE)(lambda x: x+1)(0) == 41
-assert PARTITION_DP(TEN)(THREE)(lambda x: x+1)(0) == 14
+assert DP_COUNT_PARTITION(ZERO)(ZERO)(lambda x: x+1)(0) == 1
+assert DP_COUNT_PARTITION(TWO)(ZERO)(lambda x: x+1)(0) == 0
+assert DP_COUNT_PARTITION(TEN)(ZERO)(lambda x: x+1)(0) == 0
+assert DP_COUNT_PARTITION(ZERO)(ONE)(lambda x: x+1)(0) == 1
+assert DP_COUNT_PARTITION(ZERO)(NINE)(lambda x: x+1)(0) == 1
+assert DP_COUNT_PARTITION(SIX)(FOUR)(lambda x: x+1)(0) == 9
+assert DP_COUNT_PARTITION(TEN)(TEN)(lambda x: x+1)(0) == 42
+assert DP_COUNT_PARTITION(TEN)(NINE)(lambda x: x+1)(0) == 41
+assert DP_COUNT_PARTITION(TEN)(THREE)(lambda x: x+1)(0) == 14
+
+MAKE_PAIR = lambda a: lambda b: lambda extraction_num: EQUALS(extraction_num)(ZERO)(a)(b)
+HALF = lambda num: num(lambda num_bool_pair: num_bool_pair(ONE)(MAKE_PAIR(INC(num_bool_pair(ZERO)))(FALSE))(MAKE_PAIR(num_bool_pair(ZERO))(TRUE)))(MAKE_PAIR(ZERO)(FALSE))(ZERO)
+assert HALF(ZERO)(lambda x: x+1)(0) == 0
+assert HALF(ONE)(lambda x: x+1)(0) == 0
+assert HALF(TWO)(lambda x: x+1)(0) == 1
+assert HALF(THREE)(lambda x: x+1)(0) == 1
+assert HALF(FOUR)(lambda x: x+1)(0) == 2
+assert HALF(FIVE)(lambda x: x+1)(0) == 2
+
+MAKE_TRIPLET = lambda a: lambda b: lambda c: lambda extraction_num: EQUALS(extraction_num)(ZERO)(a)(EQUALS(extraction_num)(ONE)(b)(c))
+assert MAKE_TRIPLET(TEN)(NINE)(EIGHT)(ONE)(lambda x: x+1)(0) == 9
+assert MAKE_TRIPLET(TEN)(NINE)(EIGHT)(TWO)(lambda x: x+1)(0) == 8
+
+MAKE_QUADRUPLET = lambda a: lambda b: lambda c: lambda d: lambda extraction_num: EQUALS(extraction_num)(ZERO)(a)(EQUALS(extraction_num)(ONE)(b)(EQUALS(extraction_num)(TWO)(c)(d)))
+assert MAKE_QUADRUPLET(TEN)(NINE)(EIGHT)(SEVEN)(ZERO)(lambda x: x+1)(0) == 10
+assert MAKE_QUADRUPLET(TEN)(NINE)(EIGHT)(SEVEN)(ONE)(lambda x: x+1)(0) == 9
+assert MAKE_QUADRUPLET(TEN)(NINE)(EIGHT)(SEVEN)(THREE)(lambda x: x+1)(0) == 7
+
+MAKE_SINGLE = lambda a: lambda extraction_num: a
+
+my_tree = MAKE_TRIPLET(TWO)(MAKE_QUADRUPLET(THREE)(MAKE_SINGLE(ZERO))(MAKE_SINGLE(ZERO))(MAKE_SINGLE(ZERO)))(MAKE_PAIR(ONE)(MAKE_PAIR(ONE)(MAKE_SINGLE(ZERO))))
+my_super_tree = MAKE_QUADRUPLET(THREE)(my_tree)(my_tree)(my_tree)
+
+SUBTREE_SIZE = Z_COMBINATOR(lambda me:
+    lambda node:
+        INC(
+            GREATER_THAN_OR_EQUALS(node(ZERO))(ONE)
+            (
+                GREATER_THAN_OR_EQUALS(node(ZERO))(TWO)
+                (
+                    GREATER_THAN_OR_EQUALS(node(ZERO))(THREE)
+                    (
+                        (lambda _: ADD(ADD(me(node(ONE)))(me(node(TWO))))(me(node(THREE))))
+                    )
+                    (lambda _: ADD(me(node(ONE)))(me(node(TWO))))
+                )
+                (lambda _: me(node(ONE)))
+            )
+            (lambda _: ZERO)
+            (NONE)
+        )
+)
+
+assert SUBTREE_SIZE(my_tree)(lambda x: x+1)(0) == 8
+assert SUBTREE_SIZE(my_tree(ONE))(lambda x: x+1)(0) == 4
+assert SUBTREE_SIZE(my_super_tree)(lambda x: x+1)(0) == 25
