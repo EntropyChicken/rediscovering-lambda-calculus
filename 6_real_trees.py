@@ -366,35 +366,42 @@ TREE_TERM_SUM = Z_COMBINATOR(lambda me:
 )
 TREE_SUM = lambda tree: TREE_TERM_SUM(tree)(IDENTITY)
 TREE_SIZE = lambda tree: TREE_TERM_SUM(tree)(lambda element: ONE)
+TREE_VALID_COUNT = lambda tree: lambda element_condition: TREE_TERM_SUM(tree)((lambda element: element_condition(element)(ONE)(ZERO))) # how many nodes' elements satisfy element_condition(element)
+TREE_HAS_NUMERAL = lambda tree: lambda num: NOT(IS_ZERO(TREE_VALID_COUNT(tree)(lambda element: EQUALS(element)(num))))
 assert TREE_SUM(my_little_tree)(lambda x: x+1)(0) == 25
 assert TREE_SUM(my_big_tree)(lambda x: x+1)(0) == 300
 assert TREE_SIZE(my_little_tree)(lambda x: x+1)(0) == 2
 assert TREE_SIZE(my_big_tree)(lambda x: x+1)(0) == 33
+assert TREE_HAS_NUMERAL(my_little_tree)(FIVE)(True)(False)
+assert TREE_HAS_NUMERAL(my_little_tree)(TWENTY)(True)(False)
+assert NOT(TREE_HAS_NUMERAL(my_little_tree)(ZERO))(True)(False)
+assert TREE_HAS_NUMERAL(my_big_tree)(ZERO)(True)(False)
+assert TREE_HAS_NUMERAL(my_big_tree)(THIRTEEN)(True)(False)
+assert NOT(TREE_HAS_NUMERAL(my_big_tree)(ADD(TWENTY)(ONE)))(True)(False)
 
-TREE_HEIGHT = Z_COMBINATOR(lambda me:
-    lambda tree:
-        INC
+# generalized tree DFS.
+# combine_child_values should be commutative and associative
+# combine_children_value_and_my_value is called with arguments: (value for node)(combined value for all children of node)
+DFS = Z_COMBINATOR(lambda me:
+    lambda tree: lambda term: lambda combine_children_value_and_my_value: lambda default_children_value: lambda combine_child_values: lambda children_start_value:
+        combine_children_value_and_my_value
+        (term(tree))
         (
             tree(ONE)
-            (lambda _: TERM_MAX(tree(TWO))(lambda subtree: me(subtree)))
-            (lambda _: ZERO)
+            (lambda _:
+                TERM_COMBINE
+                (tree(TWO))
+                (lambda subtree: me(subtree)(term)(combine_children_value_and_my_value)(default_children_value)(combine_child_values)(children_start_value))
+                (combine_child_values)
+                (children_start_value)
+            )
+            (lambda _: default_children_value)
             (NONE)
         )
 )
+TREE_HEIGHT = lambda tree: DFS(tree)(lambda tree: ONE)(ADD)(ZERO)(MAX)(ZERO) # read this like: you get ONE and ADD it to ZERO, or if there's children, their MAX starting from ZERO
 assert TREE_HEIGHT(my_little_tree)(lambda x: x+1)(0) == 2
 assert TREE_HEIGHT(my_big_tree)(lambda x: x+1)(0) == 9
 
-# generalized tree DFS. combine_values should be commutative and associative
-DFS = Z_COMBINATOR(lambda me:
-    lambda tree: lambda get_value: lambda combine_values: lambda start_value:
-        combine_values
-        (get_value(tree))
-        (
-            tree(ONE)
-            (lambda _: TERM_COMBINE(tree(TWO))(lambda subtree: me(subtree)(term)))
-            (lambda _: start_value)
-            (NONE)
-        )
-)
 
 # trees :D
